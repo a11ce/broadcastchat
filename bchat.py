@@ -9,11 +9,21 @@ def rcv(pNum):
         print(inSk.recvfrom(1024)[0].decode("utf-8"), end="\n> ")
 
 
-def main():
+def send(sockObj, nick, msg, pNum):
+    pMsg = nick + ": " + msg
+    sockObj.sendto(pMsg.encode(), ('255.255.255.255', pNum))
 
+
+def makeSendSock():
     cs = sk.socket(sk.AF_INET, sk.SOCK_DGRAM)
     cs.setsockopt(sk.SOL_SOCKET, sk.SO_REUSEADDR, 1)
     cs.setsockopt(sk.SOL_SOCKET, sk.SO_BROADCAST, 1)
+    return cs
+
+
+def main():
+
+    cs = makeSendSock()
 
     print(
         "Welcome to BChat.\nIf you're using a custom room number, enter it now. Otherwise, just press enter."
@@ -30,8 +40,7 @@ def main():
           end="")
     while True:
         inp = input()
-        msg = nick + ": " + inp
-        cs.sendto(msg.encode(), ('255.255.255.255', pNum))
+        send(cs, nick, inp, pNum)
     print("Bye!")
 
 
